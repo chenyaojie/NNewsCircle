@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single"
+           android:id="@+id/first_group">
+        <item
+            android:id="@+id/user_friend"
+            android:icon="@drawable/ic_menu_life"
+            android:title="我的好友"/>
+        <item
+            android:id="@+id/user_fav"
+            android:icon="@drawable/ic_menu_fina"
+            android:title="我的收藏"/>
+
+    </group>
+    <group android:checkableBehavior="single"
+           android:id="@+id/second_group">
+        <item
+            android:id="@+id/newsType_user"
+            android:checked="true"
+            android:icon="@drawable/ic_menu_user"
+            android:title="我的专属"/>
+        <item
+            android:id="@+id/newsType_life"
+            android:icon="@drawable/ic_menu_life"
+            android:title="热爱生活"/>
+        <item
+            android:id="@+id/newsType_fina"
+            android:icon="@drawable/ic_menu_fina"
+            android:title="货币战争"/>
+        <item
+            android:id="@+id/newsType_acg"
+            android:icon="@drawable/ic_menu_acgn"
+            android:title="萌二次元"/>
+        <item
+            android:id="@+id/newsType_food"
+            android:icon="@drawable/ic_menu_food"
+            android:title="深夜食堂"/>
+        <item
+            android:id="@+id/newsType_tech"
+            android:icon="@drawable/ic_menu_tech"
+            android:title="未来科技"/>
+        <item
+            android:id="@+id/newsType_sport"
+            android:icon="@drawable/ic_menu_spor"
+            android:title="体坛风云"/>
+    </group>
+
+
+</menu>
