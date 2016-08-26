@@ -89,7 +89,9 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main);
-
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         autoLoginTest();
         initIM();
     }
@@ -169,13 +171,10 @@ public class MainActivity extends BaseActivity {
         reloadNewsList();
     }
 
-
-
     private void setupToolbar() {
 
         mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
-        //mToolbar.setNavigationIcon(R.drawable.ic_clear_all_white_24dp);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         mToolbar.setContentInsetsAbsolute(0, 0);
@@ -205,6 +204,20 @@ public class MainActivity extends BaseActivity {
     private void setupRecyclerView() {
 
         mAdapter = new NewsListAdapter(this);
+        mAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                NewsFragment newsFragment = new NewsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("pos",position);
+                newsFragment.setArguments(bundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_frame_layout,newsFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
         mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -214,14 +227,16 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int nowPosition = mLayoutManager.findLastCompletelyVisibleItemPositions(new int[2])[1];
-                boolean isBottom = nowPosition >= mAdapter.getItemCount() - PRE_CACHE_SIZE;
-                if (!mSwipeRefreshLayout.isRefreshing() && isBottom) {
-                    if (!mIsFirstTimeTouchBottom) {
-                        setRefresh(true);
-                        loadMoreNews();
-                    } else {
-                        mIsFirstTimeTouchBottom = false;
+                if (!newsListType.isEmpty()) {
+                    int nowPosition = mLayoutManager.findLastCompletelyVisibleItemPositions(new int[2])[1];
+                    boolean isBottom = nowPosition >= mAdapter.getItemCount() - PRE_CACHE_SIZE;
+                    if (!mSwipeRefreshLayout.isRefreshing() && isBottom) {
+                        if (!mIsFirstTimeTouchBottom) {
+                            setRefresh(true);
+                            loadMoreNews();
+                        } else {
+                            mIsFirstTimeTouchBottom = false;
+                        }
                     }
                 }
             }
@@ -247,8 +262,16 @@ public class MainActivity extends BaseActivity {
         mBanner.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Toast.makeText(MainActivity.this, "CLick + " + position, Toast.LENGTH_SHORT).show();
                 // TODO: 2016/8/25 待添加新闻详情页的跳转
+                NewsFragment newsFragment = new NewsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("pos_banner",position);
+                newsFragment.setArguments(bundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_frame_layout,newsFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
         BmobQuery<NewsList> query = new BmobQuery<>();
@@ -473,15 +496,16 @@ public class MainActivity extends BaseActivity {
                     queryCF.findObjects(new FindListener<NewsList>() {
                         @Override
                         public void done(List<NewsList> list, BmobException e) {
+                            setRefresh(false);
                             if (e == null) {
                                 mAdapter.addToBottom(list);
-                                setRefresh(false);
                             } else {
                                 Log.i(TAG, "调用CF新闻失败" + e.toString());
                             }
                         }
                     });
                 } else {
+                    setRefresh(false);
                     Log.i(TAG, "调用云端代码失败" + e.toString());
                 }
             }

@@ -1,8 +1,8 @@
 package com.wetter.nnewscircle.base;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.content.Context;
 
 /**
  * Created by Wetter on 2016/7/23.

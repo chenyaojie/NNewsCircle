@@ -6,7 +6,7 @@ import cn.bmob.v3.BmobObject;
 /**
  * Created by Wetter on 2016/4/2.
  */
-public class NewsList extends BmobObject {
+public class NewsList extends BmobObject{
     private String newsType;
     private String newsTitle;
     private String picUrl;
@@ -61,4 +61,5 @@ public class NewsList extends BmobObject {
     public Boolean getShowDate() {
         return isShowDate;
     }
+
 }

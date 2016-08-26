@@ -22,7 +22,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
 
     public static List<NewsList> mDataList = new ArrayList<>();
     private Context mContext = null;
-
+    private OnItemClickListener mOnItemClickListener;
     private boolean allowedHead = false;
     private static final byte TYPE_NORMAL = 0;
     private static final byte TYPE_HEAD = 1;
@@ -81,6 +81,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
             @Override
             public void onClick(View view) {
                 // TODO: 2016/8/25 待添加点击事件新闻详情页跳转
+                if (realPosition >= 0) mOnItemClickListener.onItemClick(realPosition);
             }
         });
     }
@@ -103,7 +104,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
         }
     }
 
-    public void addHeadView(View view){
+    public void addHeadView(View view) {
         mHeadView = view;
         allowedHead = true;
         notifyDataSetChanged();
@@ -147,6 +148,14 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
         }
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+        this.mOnItemClickListener = mOnItemClickListener;
+    }
+
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         private SimpleDraweeView mNewsPic;
@@ -156,7 +165,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
             super(itemView);
             if (itemViewType == TYPE_HEAD) {
                 return;
-            } else if(itemViewType == TYPE_NORMAL){
+            } else if (itemViewType == TYPE_NORMAL) {
                 mNewsPic = (SimpleDraweeView) itemView.findViewById(R.id.card_news_pic);
                 mTitle = (TextView) itemView.findViewById(R.id.card_news_title);
                 mDate = (TextView) itemView.findViewById(R.id.card_news_date);
