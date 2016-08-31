@@ -38,7 +38,7 @@ dependencies {
     // Banner
     compile 'com.bigkoo:convenientbanner:2.0.5'
     // Fresco
-    compile 'com.facebook.fresco:fresco:0.12.0'
+    compile 'com.facebook.fresco:fresco:0.13.0'
     // ShineButton
     compile 'com.sackcentury:shinebutton:0.1.5'
 

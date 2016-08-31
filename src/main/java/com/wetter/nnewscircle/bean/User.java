@@ -8,12 +8,23 @@ import cn.bmob.v3.datatype.BmobFile;
 
 public class User extends BmobUser {
 
+    // 用户头像
     private String avatar;
-    private List<String> hobby = new ArrayList();
-    private List<String> collect = new ArrayList<>();
-    private List<String> likeType = new ArrayList<>();
     private BmobFile avatarU;
     private String nickName;
+
+    // 用户感兴趣（点赞或收藏）的新闻集合
+    private List<String> hobby = new ArrayList();
+    // 用户收藏的新闻集合
+    private List<String> collect = new ArrayList<>();
+    // 用户点赞的新闻集合
+    private List<String> like = new ArrayList<>();
+    // 用户喜欢的新闻类型
+    private List<String> likeType = new ArrayList<>();
+
+    public List<String> getLike() {
+        return like;
+    }
 
     public List<String> getLikeType() {
         return likeType;

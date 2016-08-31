@@ -21,7 +21,7 @@ public class MyApplication extends Application {
 
         // Fresco初始化
         Fresco.initialize(this);
-
+        //QbSdk.allowThirdPartyAppDownload(true);
         // 只有主进程运行的时候才需要初始化
         if (getApplicationInfo().packageName.equals(getMyProcessName())){
             //im初始化

@@ -1,12 +1,14 @@
 package com.wetter.nnewscircle.bean;
 
 
+import java.io.Serializable;
+
 import cn.bmob.v3.BmobObject;
 
 /**
  * Created by Wetter on 2016/4/2.
  */
-public class NewsList extends BmobObject{
+public class NewsList extends BmobObject implements Serializable{
     private String newsType;
     private String newsTitle;
     private String picUrl;

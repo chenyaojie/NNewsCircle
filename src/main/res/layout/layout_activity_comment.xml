@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wetter.nnewscircle.ui.CommentActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/comment_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        android:elevation="3dp"
+        app:navigationIcon="@drawable/ic_reply_black_24dp"
+        app:title="评论列表"
+        app:titleTextColor="@color/icons"/>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/comment_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/comment_recycle_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
+
+        <EditText
+            android:id="@+id/comment_et"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="随便说两句···"/>
+
+        <ImageButton
+            android:id="@+id/comment_send_btn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:onClick="sendComment"/>
+    </LinearLayout>
+</LinearLayout>

@@ -78,8 +78,6 @@ public class ChatActivity extends BaseActivity implements MessageListHandler {
 
     private void setupSwipeRefreshLayout() {
         mSwipe = (SwipeRefreshLayout) findViewById(R.id.chat_swipe);
-        //mSwipe.setProgressBackgroundColorSchemeColor(0x00BCD4);
-        //mSwipe.setColorSchemeColors(0xffffff, 0xffffff, 0xffffff, 0xffffff);
         mSwipe.setColorSchemeResources(R.color.icons,R.color.icons,R.color.icons,R.color.icons);
         mSwipe.setProgressBackgroundColorSchemeResource(R.color.primary);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

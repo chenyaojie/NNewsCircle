@@ -89,9 +89,6 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main);
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         autoLoginTest();
         initIM();
     }
@@ -150,12 +147,14 @@ public class MainActivity extends BaseActivity {
     }
 
     private void autoLoginTest() {
-        BmobUser.loginByAccount("001", "123456", new LogInListener<User>() {
+        BmobUser.loginByAccount("002", "123456", new LogInListener<User>() {
 
             @Override
             public void done(User user, BmobException e) {
-                if(user!=null){
-                    Log.i(TAG,"用户登陆成功");
+                if (user != null) {
+                    Log.i(TAG, "用户登陆成功");
+                } else {
+                    Log.i(TAG, "done: 用户登陆失败"+e.toString());
                 }
             }
         });
@@ -207,20 +206,17 @@ public class MainActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                NewsFragment newsFragment = new NewsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("pos",position);
-                newsFragment.setArguments(bundle);
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_frame_layout,newsFragment)
-                        .addToBackStack(null)
-                        .commit();
+
+                Intent intent = new Intent(MainActivity.this,NewsActivity.class);
+                intent.putExtra("pos",position);
+                startActivity(intent);
             }
         });
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
         mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -262,16 +258,9 @@ public class MainActivity extends BaseActivity {
         mBanner.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                // TODO: 2016/8/25 待添加新闻详情页的跳转
-                NewsFragment newsFragment = new NewsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("pos_banner",position);
-                newsFragment.setArguments(bundle);
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_frame_layout,newsFragment)
-                        .addToBackStack(null)
-                        .commit();
+                Intent intent = new Intent(MainActivity.this,NewsActivity.class);
+                intent.putExtra("pos_banner",position);
+                startActivity(intent);
             }
         });
         BmobQuery<NewsList> query = new BmobQuery<>();

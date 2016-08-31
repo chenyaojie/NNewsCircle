@@ -13,9 +13,19 @@
         <item name="android:textColorSecondary">@color/secondary_text</item>
         <item name="android:icon">@color/icons</item>
         <item name="android:divider">@color/divider</item>
+        <item name="android:colorControlHighlight">@color/accent</item>
+    </style>
 
+    <style name="AppTheme.Draw" parent="AppTheme">
         <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 
+    <style name="mProgress_horizontal">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/program_bar</item><!-- progress_horizontal -->
+        <item name="android:indeterminateDrawable">@android:drawable/progress_indeterminate_horizontal</item>
+        <item name="android:minHeight">3dp</item>
+        <item name="android:maxHeight">3dp</item>
     </style>
 
 </resources>

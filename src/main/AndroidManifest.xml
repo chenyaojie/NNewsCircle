@@ -43,6 +43,11 @@
         </activity>
         <activity android:name=".ui.IMChatListActivity"/>
         <activity android:name=".ui.SocialActivity"/>
+
+        <meta-data
+            android:name="QBSDKAppKey"
+            android:value="kQQmBkiE1byqM1ro0kFgK1xV"/>
+
         <!-- 设置bmob appkey -->
         <meta-data
             android:name="Bmob_APP_KEY"
@@ -67,6 +72,10 @@
         <service android:name="cn.bmob.newim.core.service.HeartBeatService"/>
 
         <activity android:name=".ui.ChatActivity">
+        </activity>
+        <activity android:name=".ui.NewsActivity">
+        </activity>
+        <activity android:name=".ui.CommentActivity">
         </activity>
     </application>
 
