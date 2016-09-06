@@ -54,25 +54,25 @@ import cn.bmob.v3.listener.LogInListener;
 public class MainActivity extends BaseActivity {
 
     public static final String TAG = "MainActivity";
-    private static final int PRE_CACHE_SIZE = 4;
 
     // Banner新闻集
     public static List<NewsList> mBannerList = new ArrayList<>();
 
     // 主界面UI控件
-    private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private NavigationView mNavigation;
-    private SimpleDraweeView mToolBarAvatar;
-    private ConvenientBanner mBanner;
-
     private RecyclerView mRecyclerView;
-    private NewsListAdapter mAdapter;
-    private StaggeredGridLayoutManager mLayoutManager;
+    private ConvenientBanner mBanner;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
+    // Toolbar控件
+    private Toolbar mToolbar;
+    private SimpleDraweeView mToolBarAvatar;
     private TextView mToolbarTitle;
+
+    private NewsListAdapter mAdapter;
+    private StaggeredGridLayoutManager mLayoutManager;
 
     // 侧滑栏控件
     private ImageView headerAvatar;
@@ -84,6 +84,7 @@ public class MainActivity extends BaseActivity {
     private final int LIST_LIMIT = 15;
     private final int MINI_HOBBY_SIZE = 5;
     private boolean mIsFirstTimeTouchBottom = true;
+    private static final int PRE_CACHE_SIZE = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +100,7 @@ public class MainActivity extends BaseActivity {
         //开始自动翻页
         mBanner.startTurning(3000);
         User currentUser = BmobUser.getCurrentUser(User.class);
-        if(currentUser!=null) {
+        if (currentUser != null) {
             mToolBarAvatar.setImageURI(currentUser.getAvatar());
         }
     }
@@ -115,7 +116,7 @@ public class MainActivity extends BaseActivity {
      * 注册离线消息接收事件
      */
     @Subscribe
-    public void onEventMainThread(OfflineMessageEvent event){
+    public void onEventMainThread(OfflineMessageEvent event) {
         // 检查小红点
     }
 
@@ -123,21 +124,21 @@ public class MainActivity extends BaseActivity {
      * 注册消息接收事件
      */
     @Subscribe
-    public void onEventMainThread(MessageEvent event){
+    public void onEventMainThread(MessageEvent event) {
         // 检查小红点
     }
 
     private void initIM() {
         // 当前用户的登入
         User currentUser = BmobUser.getCurrentUser(User.class);
-        if(currentUser!=null){
+        if (currentUser != null) {
             BmobIM.getInstance().updateUserInfo(new BmobIMUserInfo(currentUser.getObjectId(), currentUser.getUsername(), currentUser.getAvatar()));
             // 连接服务器
             BmobIM.connect(currentUser.getObjectId(), new ConnectListener() {
                 @Override
                 public void done(String uid, BmobException e) {
                     if (e == null) {
-                        Log.i(TAG, uid + " connect success");
+                        Log.i(TAG, uid + "连接聊天服务器成功");
                     } else {
                         Log.e(TAG, e.getErrorCode() + "/" + e.getMessage());
                     }
@@ -147,14 +148,14 @@ public class MainActivity extends BaseActivity {
     }
 
     private void autoLoginTest() {
-        BmobUser.loginByAccount("002", "123456", new LogInListener<User>() {
+        BmobUser.loginByAccount("test001", "123456", new LogInListener<User>() {
 
             @Override
             public void done(User user, BmobException e) {
                 if (user != null) {
-                    Log.i(TAG, "用户登陆成功");
+                    Log.i(TAG, "用户 " + user.getUsername() + " 登陆成功");
                 } else {
-                    Log.i(TAG, "done: 用户登陆失败"+e.toString());
+                    Log.i(TAG, "done: 用户登陆失败" + e.toString());
                 }
             }
         });
@@ -207,8 +208,8 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(int position) {
 
-                Intent intent = new Intent(MainActivity.this,NewsActivity.class);
-                intent.putExtra("pos",position);
+                Intent intent = new Intent(MainActivity.this, NewsActivity.class);
+                intent.putExtra("pos", position);
                 startActivity(intent);
             }
         });
@@ -242,7 +243,7 @@ public class MainActivity extends BaseActivity {
 
     private void setupSwipeRefreshLayout() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.main_swipe);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary,R.color.primary_dark,R.color.primary,R.color.primary_dark);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark, R.color.primary, R.color.primary_dark);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -258,8 +259,8 @@ public class MainActivity extends BaseActivity {
         mBanner.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Intent intent = new Intent(MainActivity.this,NewsActivity.class);
-                intent.putExtra("pos_banner",position);
+                Intent intent = new Intent(MainActivity.this, NewsActivity.class);
+                intent.putExtra("pos_banner", position);
                 startActivity(intent);
             }
         });
@@ -289,9 +290,20 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
         mNavigation = (NavigationView) findViewById(R.id.main_nav_view);
 
-        headerAvatar = (ImageView) findViewById(R.id.header_image);
-        headerNickname = (TextView) findViewById(R.id.tv_header_nickname);
-        headerEmail = (TextView) findViewById(R.id.tv_header_email);
+        headerAvatar = (ImageView) mNavigation.getHeaderView(0).findViewById(R.id.header_image);
+        headerNickname = (TextView) mNavigation.getHeaderView(0).findViewById(R.id.tv_header_nickname);
+        headerAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                User current = BmobUser.getCurrentUser(User.class);
+                if (current != null) {
+                    // TODO: 2016/9/6 跳转至个人设置
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                } else {
+                    // TODO: 2016/9/6 跳转至登入界面
+                }
+            }
+        });
 
         // 添加侧边栏按钮与其监听器
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
@@ -312,40 +324,60 @@ public class MainActivity extends BaseActivity {
         mNavigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                item.setChecked(true);
+
                 switch (item.getItemId()) {
                     case R.id.newsType_user:
                         newsListType = "";
+                        item.setChecked(true);
+                        mToolbarTitle.setText("新闻推荐");
+                        reloadNewsList();
                         break;
                     case R.id.newsType_life:
                         newsListType = "LIFE";
+                        item.setChecked(true);
+                        mToolbarTitle.setText("热爱生活");
+                        reloadNewsList();
                         break;
                     case R.id.newsType_sport:
                         newsListType = "SPOR";
+                        item.setChecked(true);
+                        mToolbarTitle.setText("体坛风云");
+                        reloadNewsList();
                         break;
                     case R.id.newsType_fina:
                         newsListType = "FINA";
+                        item.setChecked(true);
+                        mToolbarTitle.setText("货币战争");
+                        reloadNewsList();
                         break;
                     case R.id.newsType_acg:
                         newsListType = "ACGN";
+                        item.setChecked(true);
+                        mToolbarTitle.setText("萌二次元");
+                        reloadNewsList();
                         break;
                     case R.id.newsType_food:
                         newsListType = "FOOD";
+                        item.setChecked(true);
+                        mToolbarTitle.setText("深夜食堂");
+                        reloadNewsList();
                         break;
                     case R.id.newsType_tech:
                         newsListType = "TECH";
+                        item.setChecked(true);
+                        mToolbarTitle.setText("未来科技");
+                        reloadNewsList();
                         break;
                     case R.id.user_friend:
                         startActivity(new Intent(MainActivity.this, SocialActivity.class));
                         break;
                     case R.id.user_fav:
-
+                        reloadNewsList();
                         break;
                     default:
                         break;
                 }
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-                reloadNewsList();
                 return false;
             }
         });
@@ -508,7 +540,8 @@ public class MainActivity extends BaseActivity {
         if (!requestDataRefresh) {
             // 防止刷新消失太快，让子弹飞一会儿.
             mSwipeRefreshLayout.postDelayed(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     if (mSwipeRefreshLayout != null) {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }

@@ -6,11 +6,20 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sackcentury.shinebuttonlib.ShineButton;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
 import com.wetter.nnewscircle.R;
 import com.wetter.nnewscircle.adapter.NewsListAdapter;
 import com.wetter.nnewscircle.base.BaseActivity;
@@ -222,7 +231,13 @@ public class NewsActivity extends BaseActivity {
                 }
                 super.onProgressChanged(view, newProgress);
             }
-
+        });
+        mWebView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                Toast.makeText(NewsActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
+            }
         });
 
     }
@@ -232,13 +247,13 @@ public class NewsActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.news_share_img:
                 // TODO: 调用友们SDK分享
-                Intent intentShare = new Intent(Intent.ACTION_SEND);
-                intentShare.setType("text/plain");
-                intentShare.putExtra(Intent.EXTRA_SUBJECT, mNews.getNewsTitle());
-                intentShare.putExtra(Intent.EXTRA_TEXT, mNews.getNewsTitle());
-                intentShare.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intentShare.putExtra(Intent.EXTRA_STREAM, mNews.getPicUrl());
-                NewsActivity.this.startActivity(Intent.createChooser(intentShare, "分享到"));
+                new ShareAction(NewsActivity.this).setDisplayList(SHARE_MEDIA.SINA,SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE)
+                        .withTitle("新闻圈")
+                        .withText(mNews.getNewsTitle())
+                        .withMedia(new UMImage(NewsActivity.this,mNews.getPicUrl()))
+                        .withTargetUrl("https://www.baidu.com/")
+                        .setCallback(umShareListener)
+                        .open();
                 break;
 
             case R.id.news_comment_img:
@@ -254,8 +269,6 @@ public class NewsActivity extends BaseActivity {
     private void checkButtonAndCounter() {
 
         currentUser = BmobUser.getCurrentUser(User.class);
-//        btCollect.setChecked(false);
-//        btLike.setChecked(false);
 
         if (currentUser != null) {
             List<String> userCollect = currentUser.getCollect();
@@ -287,5 +300,39 @@ public class NewsActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private UMShareListener umShareListener = new UMShareListener() {
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+            com.umeng.socialize.utils.Log.d("plat","platform"+platform);
+            if(platform.name().equals("WEIXIN_FAVORITE")){
+                Toast.makeText(NewsActivity.this,platform + " 收藏成功啦",Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(NewsActivity.this, platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            Toast.makeText(NewsActivity.this,platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
+            if(t!=null){
+                com.umeng.socialize.utils.Log.d("throw","throw:"+t.getMessage());
+            }
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            Toast.makeText(NewsActivity.this,platform + " 分享取消了", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        /** attention to this below ,must add this**/
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+        com.umeng.socialize.utils.Log.d("result","onActivityResult");
     }
 }

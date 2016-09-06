@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.wetter.nnewscircle.R;
 import com.wetter.nnewscircle.adapter.TabFragmentAdapter;
@@ -22,6 +23,7 @@ public class SocialActivity extends BaseActivity {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private Toolbar mToolbar;
+    private ImageButton mAddFriend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,15 @@ public class SocialActivity extends BaseActivity {
         mFragmentAdapter = new TabFragmentAdapter(getSupportFragmentManager(), fragments, titles);
         mViewPager.setAdapter(mFragmentAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
+
+        mAddFriend = (ImageButton) findViewById(R.id.add_friend_btn);
+        mAddFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 添加联系人
+
+            }
+        });
     }
 
 }

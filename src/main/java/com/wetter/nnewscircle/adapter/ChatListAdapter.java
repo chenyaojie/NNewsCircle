@@ -15,9 +15,6 @@ import com.wetter.nnewscircle.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Wetter on 2016/8/12.
- */
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyViewHolder>{
 
     private List<PrivateConversation> mConversations = new ArrayList<>();

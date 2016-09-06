@@ -3,6 +3,7 @@ package com.wetter.nnewscircle;
 import android.app.Application;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.umeng.socialize.PlatformConfig;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,7 +22,7 @@ public class MyApplication extends Application {
 
         // Fresco初始化
         Fresco.initialize(this);
-        //QbSdk.allowThirdPartyAppDownload(true);
+
         // 只有主进程运行的时候才需要初始化
         if (getApplicationInfo().packageName.equals(getMyProcessName())){
             //im初始化
@@ -29,6 +30,11 @@ public class MyApplication extends Application {
             //注册消息接收器
             BmobIM.registerDefaultMessageHandler(new MyMessageHandler(this));
         }
+
+        // 友盟社会化
+        PlatformConfig.setWeixin("wx967daebe835fbeac", "5bb696d9ccd75a38c8a0bfe0675559b3");
+        PlatformConfig.setQQZone("1105508928", "fZNhjlcgbCVPdVof");
+        PlatformConfig.setSinaWeibo("306593860","110b8aff15c98bb365e13e404b549cf8");
     }
 
     /**

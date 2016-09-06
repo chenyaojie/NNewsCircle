@@ -8,15 +8,15 @@
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/chat_list_avatar"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_gravity="center"
         android:layout_marginEnd="15dp"
         android:layout_marginStart="5dp"
         fresco:actualImageScaleType="focusCrop"
         fresco:fadeDuration="300"
         fresco:placeholderImage="@drawable/ic_account_circle_black_24dp"
-        fresco:roundedCornerRadius="15dp"/>
+        fresco:roundAsCircle="true"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -36,7 +36,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:text="XXXXXX"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_marginEnd="5dp"
                 android:gravity="center_vertical|end"
                 android:text="XXXXXX"
-                android:textSize="20dp"/>
+                android:textSize="15dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -63,7 +63,7 @@
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="XXXXXX"
-                android:textSize="18dp"/>
+                android:textSize="16dp"/>
 
             <TextView
                 android:id="@+id/chat_list_uncount"
@@ -76,7 +76,7 @@
                 android:singleLine="true"
                 android:text="XX"
                 android:padding="3dp"
-                android:textSize="13dp"
+                android:textSize="12dp"
                 android:textColor="@color/icons"
                 android:background="@drawable/list_newmessage"/>
         </LinearLayout>

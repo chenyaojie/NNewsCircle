@@ -43,7 +43,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
         holder.tvUserName.setText(tempComment.getUser().getNickName());
         String postTime = tempComment.getSerialNumber()+"楼·"+tempComment.getCreatedAt().substring(5, 10);
         holder.tvSendDate.setText(postTime);
-        holder.tvHotNum.setText(tempComment.getUpCounter());
+        holder.tvHotNum.setText(tempComment.getUpCounter()+"");
         holder.tvContent.setText(tempComment.getContent());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +71,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
 
     public void updateComment(final int pos) {
         BmobQuery<Comment> query = new BmobQuery<>();
+        query.include("user");
         query.getObject(mCommentList.get(pos).getObjectId(), new QueryListener<Comment>() {
             @Override
             public void done(Comment comment, BmobException e) {

@@ -132,7 +132,6 @@ public class ChatActivity extends BaseActivity implements MessageListHandler {
                     if (null != list && list.size() > 0) {
                         Log.i(TAG, "加载历史纪录" + list.size() + "条");
                         mChatAdapter.addHistoryMsg(list);
-                        //layoutManager.scrollToPositionWithOffset(list.size() - 1, 0);
                     }
                 } else {
                     Log.i(TAG, "加载历史纪录失败"+e.toString());

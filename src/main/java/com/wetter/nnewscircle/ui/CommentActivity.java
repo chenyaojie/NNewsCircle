@@ -26,6 +26,7 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CountListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
@@ -34,7 +35,7 @@ public class CommentActivity extends BaseActivity {
 
     public static final String TAG = "CommentActivity";
 
-    private static final int PRE_CACHE_SIZE = 3;
+    private static final int PRE_CACHE_SIZE = 1;
     public static final int PAGE_LIMIT = 15;
     private boolean mIsFirstTimeTouchBottom = true;
     private NewsList mNews;
@@ -139,6 +140,8 @@ public class CommentActivity extends BaseActivity {
                 }
             }
         });
+
+        CommentAdapter.mCommentList.clear();
     }
 
     private void setupEditView() {
@@ -181,9 +184,10 @@ public class CommentActivity extends BaseActivity {
     private void refreshCommentList() {
         BmobQuery<Comment> query = new BmobQuery<>();
         query.addWhereEqualTo("postNews", new BmobPointer(mNews));
-        query.order("-serialNumber");
+        query.order("-createAt");
         query.include("user");
-        query.addWhereGreaterThan("serialNumber", CommentAdapter.mCommentList.get(0).getSerialNumber());
+        int nowSerial = CommentAdapter.mCommentList.size() == 0 ? 0 : CommentAdapter.mCommentList.get(0).getSerialNumber();
+        query.addWhereGreaterThan("serialNumber", nowSerial);
         query.findObjects(new FindListener<Comment>() {
             @Override
             public void done(List<Comment> list, BmobException e) {
@@ -260,30 +264,34 @@ public class CommentActivity extends BaseActivity {
 
             BmobQuery<Comment> query = new BmobQuery<>();
             query.addWhereEqualTo("postNews", new BmobPointer(mNews));
-            query.order("-serialNumber");
-            query.addWhereGreaterThan("serialNumber", CommentAdapter.mCommentList.get(0).getSerialNumber());
-            query.findObjects(new FindListener<Comment>() {
+            query.count(Comment.class, new CountListener() {
                 @Override
-                public void done(List<Comment> list, BmobException e) {
+                public void done(Integer integer, BmobException e) {
                     if (e == null) {
-                        int last = 1;
-                        if (list.size() > 0) {
-                            last += list.get(0).getSerialNumber();
-                        }
-                        newComment.setSerialNumber(last);
+                        newComment.setSerialNumber(integer + 1);
                         newComment.save(new SaveListener<String>() {
                             @Override
                             public void done(String s, BmobException e) {
                                 if (e == null) {
                                     Toast.makeText(CommentActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
+                                    mEditText.setText("");
+                                    mEditText.clearFocus();
+                                    mNews.increment("commentCounter");
+                                    mNews.update(new UpdateListener() {
+                                        @Override
+                                        public void done(BmobException e) {
+                                            if (e == null) {
+                                                Log.i(TAG, "done: 更新评论数目成功");
+                                            }
+                                        }
+                                    });
                                     refreshCommentList();
                                 } else {
                                     Toast.makeText(CommentActivity.this, "发送评论失败，请检查网络连接", Toast.LENGTH_SHORT).show();
+                                    Log.i(TAG, s + "done: 发送评论失败" + e.toString());
                                 }
                             }
                         });
-                    } else {
-                        Toast.makeText(CommentActivity.this, "发送评论失败，请检查网络连接", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

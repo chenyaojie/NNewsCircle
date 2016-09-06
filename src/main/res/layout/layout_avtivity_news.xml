@@ -1,102 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+
+
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/news_fragment"
+    android:id="@+id/news_linear_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/icons"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/news_linear_layout"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/news_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        android:elevation="3dp"
+        app:navigationIcon="@drawable/ic_reply_black_24dp">
+
+        <ImageButton
+            android:id="@+id/news_share_img"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/ic_share_black_24dp"
+            android:onClick="onToolbarItemClick"/>
+
+        <com.sackcentury.shinebuttonlib.ShineButton
+            android:id="@+id/news_fav_img"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginRight="18dp"
+            app:btn_color="@color/icons"
+            app:btn_fill_color="@color/accent"
+            app:shine_count="20"
+            app:shine_turn_angle="15"
+            app:siShape="@raw/heart"/>
+
+        <TextView
+            android:id="@+id/news_comment_count_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="18dp"
+            android:text="..."
+            android:textColor="@color/icons"/>
+
+        <ImageButton
+            android:id="@+id/news_comment_img"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@drawable/ic_assignment_white_24dp"
+            android:onClick="onToolbarItemClick"/>
+
+        <TextView
+            android:id="@+id/news_like_count_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="18dp"
+            android:onClick="onToolbarItemClick"
+            android:text="..."
+            android:textColor="@color/icons"/>
+
+        <com.sackcentury.shinebuttonlib.ShineButton
+            android:id="@+id/news_like_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="end|center_vertical"
+            app:btn_color="@color/icons"
+            app:btn_fill_color="@color/accent"
+            app:shine_count="15"
+            app:shine_turn_angle="20"
+            app:siShape="@raw/like"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <ProgressBar
+        android:id="@+id/news_progress_bar"
+        style="@style/mProgress_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"/>
+
+    <WebView
+        android:id="@+id/news_web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/icons"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/news_tool_bar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/primary"
-            android:elevation="3dp"
-            app:navigationIcon="@drawable/ic_reply_black_24dp">
-
-            <ImageButton
-                android:id="@+id/news_share_img"
-                android:layout_width="27dp"
-                android:layout_height="27dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/ic_share_black_24dp"
-                android:onClick="onToolbarItemClick"/>
-
-            <com.sackcentury.shinebuttonlib.ShineButton
-                android:id="@+id/news_fav_img"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerInParent="true"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginRight="18dp"
-                app:btn_color="@color/icons"
-                app:btn_fill_color="@color/accent"
-                app:shine_count="20"
-                app:shine_turn_angle="15"
-                app:siShape="@raw/heart"/>
-
-            <TextView
-                android:id="@+id/news_comment_count_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginLeft="1dp"
-                android:layout_marginRight="18dp"
-                android:text="..."
-                android:textColor="@color/icons"/>
-
-            <ImageButton
-                android:id="@+id/news_comment_img"
-                android:layout_width="27dp"
-                android:layout_height="27dp"
-                android:layout_gravity="end|center_vertical"
-                android:background="@drawable/ic_assignment_white_24dp"
-                android:onClick="onToolbarItemClick"/>
-
-            <TextView
-                android:id="@+id/news_like_count_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="18dp"
-                android:onClick="onToolbarItemClick"
-                android:text="..."
-                android:textColor="@color/icons"/>
-
-            <com.sackcentury.shinebuttonlib.ShineButton
-                android:id="@+id/news_like_btn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerInParent="true"
-                android:layout_gravity="end|center_vertical"
-                app:btn_color="@color/icons"
-                app:btn_fill_color="@color/accent"
-                app:shine_count="15"
-                app:shine_turn_angle="20"
-                app:siShape="@raw/like"/>
-
-        </android.support.v7.widget.Toolbar>
-        <!--</android.support.design.widget.AppBarLayout>-->
-            <ProgressBar
-                android:id="@+id/news_progress_bar"
-                style="@style/mProgress_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"/>
-            <WebView
-                android:id="@+id/news_web_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-        <!--</android.support.design.widget.CoordinatorLayout>-->
-    </LinearLayout>
-</FrameLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+</LinearLayout>

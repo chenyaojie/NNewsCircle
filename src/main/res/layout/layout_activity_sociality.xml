@@ -16,10 +16,10 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/primary"
-            app:navigationIcon="@drawable/ic_star_border_black_24dp"
+            app:elevation="3dp"
+            app:navigationIcon="@drawable/ic_reply_black_24dp"
             app:title="我的好友"
-            app:titleTextColor="@color/icons"
-            app:elevation="3dp">
+            app:titleTextColor="@color/icons">
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/social_tabLayout"
@@ -27,11 +27,19 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:background="@color/primary"
+                app:tabIndicatorColor="@color/icons"
+                app:tabIndicatorHeight="4dp"
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/icons"
-                app:tabTextColor="@color/primary_light"
-                app:tabIndicatorColor="@color/icons"
-                app:tabIndicatorHeight="4dp"/>
+                app:tabTextColor="@color/primary_light"/>
+
+            <ImageButton
+                android:id="@+id/add_friend_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="end"
+                android:background="@drawable/ic_add_black_24dp"
+                android:layout_marginEnd="6dp"/>
         </android.support.v7.widget.Toolbar>
 
         <android.support.v4.view.ViewPager
