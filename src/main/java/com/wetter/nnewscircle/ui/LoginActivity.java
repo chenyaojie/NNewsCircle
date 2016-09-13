@@ -1,9 +1,11 @@
 package com.wetter.nnewscircle.ui;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -37,7 +39,32 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        setupToolBar();
         setupOfficialLogin();
+        setupRegister();
+    }
+
+    private void setupToolBar() {
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.login_toolbar);
+        setSupportActionBar(mToolbar);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+    }
+
+    private void setupRegister() {
+        TextView registerButton = (TextView) findViewById(R.id.login_register_btn);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 跳转至注册页面
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                finish();
+            }
+        });
     }
 
     private void setupOfficialLogin() {
@@ -56,7 +83,7 @@ public class LoginActivity extends BaseActivity {
                     userName.setHintTextColor(0xfff25272);
                 } else {
                     userName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_face_black_24dp, 0, 0, 0);
-                    userName.setHintTextColor(0xff454545);
+                    userName.setHintTextColor(0xffdddddd);
                 }
             }
         });
@@ -68,7 +95,7 @@ public class LoginActivity extends BaseActivity {
                     passWord.setHintTextColor(0xfff25272);
                 } else {
                     passWord.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0);
-                    passWord.setHintTextColor(0xff454545);
+                    passWord.setHintTextColor(0xffdddddd);
                 }
             }
         });
@@ -123,8 +150,9 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 if(!checkIsNotEmpty()) return;
-                final ProgressDialog mDialog = new ProgressDialog(LoginActivity.this);
                 hideKeyboard();
+
+                final ProgressDialog mDialog = new ProgressDialog(LoginActivity.this);
                 mDialog.setMessage("正在登录···");
                 mDialog.show();
                 String username = userName.getText().toString();
@@ -140,7 +168,7 @@ public class LoginActivity extends BaseActivity {
                         } else {
                             Log.i(TAG, "done: 用户登录失败" + e.toString());
                             Snackbar snackbar = Snackbar.make(rootView, "用户名或密码不正确", Snackbar.LENGTH_LONG);
-                            setSnackbarColor(snackbar,0xffffffff,0xdd00BCD4);
+                            setSnackbarColor(snackbar,0xffffffff,0xFF212121);
                             snackbar.setAction("忘记密码？", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -158,11 +186,7 @@ public class LoginActivity extends BaseActivity {
     private boolean checkIsNotEmpty() {
         String username = userName.getText().toString();
         String password = passWord.getText().toString();
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(TextUtils.isEmpty(username) || TextUtils.isEmpty(password));
     }
 
     public void authorizeLogin(View view) {

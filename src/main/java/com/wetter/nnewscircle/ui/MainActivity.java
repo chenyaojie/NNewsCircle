@@ -1,7 +1,9 @@
 package com.wetter.nnewscircle.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wetter.nnewscircle.NetworkImageHolderView;
 import com.wetter.nnewscircle.R;
@@ -100,8 +103,20 @@ public class MainActivity extends BaseActivity {
         //开始自动翻页
         mBanner.startTurning(3000);
         User currentUser = BmobUser.getCurrentUser(User.class);
+        GenericDraweeHierarchy hierarchy = mToolBarAvatar.getHierarchy();
+
         if (currentUser != null) {
-            mToolBarAvatar.setImageURI(currentUser.getAvatar());
+            if (currentUser.getAvatar().isEmpty()) {
+                mToolBarAvatar.setImageURI("");
+                hierarchy.setPlaceholderImage(R.drawable.ic_default_user_avatar);
+
+            } else {
+                mToolBarAvatar.setImageURI(currentUser.getAvatar());
+            }
+
+        } else {
+            mToolBarAvatar.setImageURI("");
+            hierarchy.setPlaceholderImage(R.drawable.ic_account_circle_black_24dp);
         }
     }
 
@@ -163,6 +178,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        PreferenceManager.setDefaultValues(this, R.xml.setting, false);
         setupToolbar();
         setupDrawerLayout();
         setupSwipeRefreshLayout();
@@ -195,7 +211,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View view) {
                 // 打开收藏界面
                 // TODO: 2016/7/12 IM test
-                startActivity(new Intent(MainActivity.this, IMChatListActivity.class));
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
             }
         });
 
@@ -324,7 +340,7 @@ public class MainActivity extends BaseActivity {
         mNavigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 switch (item.getItemId()) {
                     case R.id.newsType_user:
                         newsListType = "";
@@ -374,10 +390,13 @@ public class MainActivity extends BaseActivity {
                     case R.id.user_fav:
                         reloadNewsList();
                         break;
+                    case R.id.settings:
+                        startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                        break;
                     default:
                         break;
                 }
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+
                 return false;
             }
         });
@@ -474,7 +493,12 @@ public class MainActivity extends BaseActivity {
         String cloudCodeName;
         JSONObject params = new JSONObject();
         mRecyclerView.scrollToPosition(0);
-        if (currentUser != null && currentUser.getHobby().size() > MINI_HOBBY_SIZE) {
+
+        // 读取首选项
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean smartCF = sharedPref.getBoolean("setting_news_cf", true);
+
+        if (currentUser != null && currentUser.getHobby().size() > MINI_HOBBY_SIZE && smartCF) {
             cloudCodeName = "getCFList";
             try {
                 params.put("userID", currentUser.getObjectId());

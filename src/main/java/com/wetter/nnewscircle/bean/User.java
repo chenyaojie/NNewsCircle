@@ -9,9 +9,9 @@ import cn.bmob.v3.datatype.BmobFile;
 public class User extends BmobUser {
 
     // 用户头像
-    private String avatar;
+    private String avatar = "";
     private BmobFile avatarU;
-    private String nickName;
+    private String nickName = "";
 
     // 用户感兴趣（点赞或收藏）的新闻集合
     private List<String> hobby = new ArrayList();

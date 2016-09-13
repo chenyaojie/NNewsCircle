@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single"
-           android:id="@+id/first_group">
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/first_group">
         <item
             android:id="@+id/user_friend"
             android:icon="@drawable/ic_contacts_black_24dp"
@@ -12,8 +13,9 @@
             android:title="我的收藏"/>
 
     </group>
-    <group android:checkableBehavior="single"
-           android:id="@+id/second_group">
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/second_group">
         <item
             android:id="@+id/newsType_user"
             android:checked="true"
@@ -44,6 +46,12 @@
             android:icon="@drawable/ic_directions_bike_black_24dp"
             android:title="体坛风云"/>
     </group>
-
-
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/third_group">
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="设置与帮助"/>
+    </group>
 </menu>

@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
+        android:id="@+id/login_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
@@ -23,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="110dp"
         android:layout_margin="15dp"
-        app:cardElevation="2dp">
+        app:cardElevation="1.7dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,6 +32,7 @@
             android:orientation="vertical">
 
             <EditText
+                android:inputType="textVisiblePassword"
                 android:id="@+id/login_username_et"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -78,7 +80,7 @@
         android:layout_height="40dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        app:cardElevation="2dp"
+        app:cardElevation="1.7dp"
         android:clickable="true">
 
         <TextView
@@ -103,7 +105,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        app:cardElevation="2dp">
+        app:cardElevation="1.7dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
