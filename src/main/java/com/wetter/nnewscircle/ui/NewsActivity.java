@@ -8,6 +8,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -61,7 +62,11 @@ public class NewsActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();// 返回前一个页面
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -166,7 +171,8 @@ public class NewsActivity extends BaseActivity {
                     }
 
                 } else {
-                    // TODO: 跳转至登入页面
+                    Toast.makeText(NewsActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(NewsActivity.this,LoginActivity.class));
                 }
             }
         });
@@ -205,7 +211,8 @@ public class NewsActivity extends BaseActivity {
                         });
                     }
                 } else {
-                    // TODO: 跳转至登入页面
+                    Toast.makeText(NewsActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(NewsActivity.this,LoginActivity.class));
                 }
             }
         });
@@ -214,12 +221,15 @@ public class NewsActivity extends BaseActivity {
 
     private void setupWebView() {
         mProgressBar = (ProgressBar) findViewById(R.id.news_progress_bar);
-
         mWebView = (WebView) findViewById(R.id.news_web_view);
         mWebView.getSettings().setDomStorageEnabled(true);
-        String css = "<link rel=\"stylesheet\" href=\"file:///android_asset/css/3024.css\" type=\"text/css\">";
-        String html = "<html><head>" + css + "</head><body>" + mNews.getNewsContent();
-        mWebView.loadDataWithBaseURL("", html, "text/html", "UTF-8", "");
+        mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setDatabaseEnabled(true);
+        mWebView.getSettings().setAppCacheEnabled(true);
+        mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        mWebView.loadData(mNews.getNewsContent(),"text/html; charset=UTF-8", null);
+
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -335,4 +345,5 @@ public class NewsActivity extends BaseActivity {
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
         com.umeng.socialize.utils.Log.d("result","onActivityResult");
     }
+
 }

@@ -9,15 +9,19 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wetter.nnewscircle.R;
+import com.wetter.nnewscircle.bean.AddFriendMessage;
 import com.wetter.nnewscircle.bean.PrivateConversation;
 import com.wetter.nnewscircle.util.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import cn.bmob.newim.bean.BmobIMConversation;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyViewHolder>{
 
-    private List<PrivateConversation> mConversations = new ArrayList<>();
+    private List<Object> mConversations = new ArrayList<>();
     private Context mContext;
 
     public ChatListAdapter(Context context) {
@@ -33,25 +37,30 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MyView
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final PrivateConversation temp = mConversations.get(position);
-        holder.cTitle.setText(temp.getcName());
-        holder.cContent.setText(temp.getLastMessageContent());
-        holder.cTime.setText(TimeUtil.getChatTime(false,temp.getLastMessageTime()));
-        holder.cAvatar.setImageURI(temp.getAvatar());
+        if (mConversations.get(position) instanceof PrivateConversation) {
+            final PrivateConversation temp = (PrivateConversation) mConversations.get(position);
+            holder.cTitle.setText(temp.getcName());
+            holder.cContent.setText(temp.getLastMessageContent());
+            holder.cTime.setText(TimeUtil.getChatTime(false,temp.getLastMessageTime()));
+            holder.cAvatar.setImageURI(temp.getAvatar());
 
-        if (temp.getUnReadCount() > 0) {
-            holder.cCount.setVisibility(View.VISIBLE);
-            holder.cCount.setText(temp.getUnReadCount()+"");
-        }else{
-            holder.cCount.setVisibility(View.GONE);
+            if (temp.getUnReadCount() > 0) {
+                holder.cCount.setVisibility(View.VISIBLE);
+                holder.cCount.setText(temp.getUnReadCount()+"");
+            }else{
+                holder.cCount.setVisibility(View.GONE);
+            }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    temp.onClick(mContext);
+                }
+            });
+        } else if(mConversations.get(position) instanceof AddFriendMessage){
+
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                temp.onClick(mContext);
-            }
-        });
     }
 
     @Override

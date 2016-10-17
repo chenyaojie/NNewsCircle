@@ -23,7 +23,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
     public static List<NewsList> mDataList = new ArrayList<>();
     private Context mContext = null;
     private OnItemClickListener mOnItemClickListener;
-    private boolean allowedHead = false;
+    public boolean allowedHead = false;
     private static final byte TYPE_NORMAL = 0;
     private static final byte TYPE_HEAD = 1;
     private View mHeadView;
@@ -126,8 +126,18 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
         notifyDataSetChanged();
     }
 
+    public void addToBottom(NewsList list) {
+        mDataList.add(list);
+        notifyDataSetChanged();
+    }
+
     public void addToTop(List<NewsList> list) {
         mDataList.addAll(0, list);
+        notifyDataSetChanged();
+    }
+
+    public void addToTop(NewsList list) {
+        mDataList.add(0, list);
         notifyDataSetChanged();
     }
 

@@ -16,10 +16,8 @@
         fresco:actualImageScaleType="focusCrop"
         fresco:placeholderImage="@drawable/ic_account_circle_black_24dp"
         fresco:roundAsCircle="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
 
     <TextView
         android:id="@+id/tv_header_nickname"
@@ -29,8 +27,7 @@
         android:textColor="@color/icons"
         android:textSize="16sp"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/header_image"
-        android:layout_marginBottom="20dp"/>
+        android:layout_centerHorizontal="true"/>
 
 
 </RelativeLayout>

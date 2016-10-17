@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,10 +25,15 @@ import com.wetter.nnewscircle.bean.AvatarPreference;
 import com.wetter.nnewscircle.bean.User;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
+import cn.bmob.v3.listener.UploadFileListener;
 
 public class SettingFragment extends PreferenceFragment {
     private static final String TAG = "SettingFragment";
@@ -45,7 +52,7 @@ public class SettingFragment extends PreferenceFragment {
     // Intent请求码 裁剪图片
     public static final int REQUEST_CROP = 3;
 
-    private Uri imgUri;
+    private Uri imageUri;
 
 
     @Override
@@ -72,7 +79,7 @@ public class SettingFragment extends PreferenceFragment {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setItems(new String[]{"从相册获取", "拍照获取"}, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -82,13 +89,12 @@ public class SettingFragment extends PreferenceFragment {
                                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                     intentPick.setType("image/*");
                                     startActivityForResult(intentPick, REQUEST_PICK_IMAGE);
+
                                     break;
                                 case 1:
                                     Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    imgUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(),
-                                            "avatar_" + String.valueOf(System.currentTimeMillis()) + ".png"));
-
-                                    intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+                                    imageUri = getTmpUri();
+                                    intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                                     startActivityForResult(intentCamera, REQUEST_CAMERA_IMAGE);
 
                                     break;
@@ -105,11 +111,11 @@ public class SettingFragment extends PreferenceFragment {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
 
-                    LayoutInflater inflater = LayoutInflater.from(mActivity);
+                    LayoutInflater inflater = LayoutInflater.from(getActivity());
                     View root = inflater.inflate(R.layout.layout_setting_change_nickname, null);
                     final EditText et = (EditText) root.findViewById(R.id.setting_nickname_et);
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setView(root)
                             .setTitle("更改昵称")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -118,14 +124,14 @@ public class SettingFragment extends PreferenceFragment {
                                     Log.i(TAG, "onClick: 点击了确定按钮");
                                     final String nickname = et.getText().toString();
                                     if (nickname != null && !nickname.isEmpty()) {
-                                        User updateUser = new User();
-                                        updateUser.setNickName(nickname);
-                                        updateUser.update(currentUser.getObjectId(), new UpdateListener() {
+
+                                        currentUser.setNickName(nickname);
+                                        currentUser.update(new UpdateListener() {
                                             @Override
                                             public void done(BmobException e) {
                                                 if (e == null) {
                                                     changeNickname.setSummary(nickname);
-                                                    Toast.makeText(mActivity, "更改昵称成功", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getActivity(), "更改昵称成功", Toast.LENGTH_SHORT).show();
                                                 } else {
                                                     Log.i(TAG, "done: 更改昵称失败" + e.toString());
                                                 }
@@ -134,7 +140,7 @@ public class SettingFragment extends PreferenceFragment {
 
                                     } else {
                                         Log.i(TAG, "onClick: 输入的昵称不能为空");
-                                        Toast.makeText(mActivity, "输入的昵称不能为空", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "输入的昵称不能为空", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }).setNegativeButton("取消", null).create().show();
@@ -146,12 +152,12 @@ public class SettingFragment extends PreferenceFragment {
             changePassword.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    View root = LayoutInflater.from(mActivity).inflate(R.layout.layout_setting_change_password, null);
+                    View root = LayoutInflater.from(getActivity()).inflate(R.layout.layout_setting_change_password, null);
                     final EditText oldPassword = (EditText) root.findViewById(R.id.setting_change_password_old);
                     final EditText newPassword = (EditText) root.findViewById(R.id.setting_change_password_new);
                     final EditText rePassword = (EditText) root.findViewById(R.id.setting_change_password_re);
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setView(root)
                             .setTitle("修改密码")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -168,15 +174,15 @@ public class SettingFragment extends PreferenceFragment {
                                             public void done(BmobException e) {
                                                 if (e == null) {
                                                     Log.i(TAG, "done: 修改密码成功");
-                                                    Toast.makeText(mActivity, "修改密码成功", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getActivity(), "修改密码成功", Toast.LENGTH_SHORT).show();
                                                 } else {
                                                     Log.i(TAG, "done: 修改密码失败");
-                                                    Toast.makeText(mActivity, "修改密码失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getActivity(), "修改密码失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         });
                                     } else {
-                                        Toast.makeText(mActivity, "密码格式错误", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "密码格式错误", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }).setNegativeButton("取消", null).create().show();
@@ -188,13 +194,13 @@ public class SettingFragment extends PreferenceFragment {
             logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("你将退出当前账户")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     User.logOut();
-                                    mActivity.finish();
+                                    getActivity().finish();
                                 }
                             })
                             .setNegativeButton("取消", null).create().show();
@@ -213,18 +219,125 @@ public class SettingFragment extends PreferenceFragment {
 
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
 
         switch (requestCode) {
             case REQUEST_PICK_IMAGE:
+                if (data != null) {
+                    imageUri = data.getData();
+                    startCropImage(imageUri);
+                }
                 break;
             case REQUEST_CAMERA_IMAGE:
+                startCropImage(imageUri);
                 break;
-            case  REQUEST_CROP:
+            case REQUEST_CROP:
+                if (imageUri != null) {
+                    setCropImg();
+                }
                 break;
         }
     }
+
+    private Bitmap decodeUriAsBitmap(Uri uri) {
+        Bitmap bitmap;
+        try {
+            bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(uri));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return bitmap;
+    }
+
+    private void setCropImg() {
+        changeAvatar.getAvatar().setImageURI(imageUri);
+        saveBitmap(Environment.getExternalStorageDirectory() + "/crop_"
+                + System.currentTimeMillis() + ".png", decodeUriAsBitmap(imageUri));
+
+    }
+
+    public void saveBitmap(String fileName, Bitmap mBitmap) {
+        File f = new File(fileName);
+        FileOutputStream fOut = null;
+        try {
+            f.createNewFile();
+            fOut = new FileOutputStream(f);
+            mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            fOut.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fOut.close();
+                Log.i(TAG, "saveBitmap: save success");
+                uploadAvatar(fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void uploadAvatar(String uri) {
+
+        Log.i(TAG, "crop picture uri: " + uri);
+        final BmobFile newAvatar = new BmobFile(new File(uri));
+        newAvatar.uploadblock(new UploadFileListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                    Log.i(TAG, "done: 上传新头像成功");
+
+                    currentUser.setAvatar(newAvatar.getFileUrl());
+                    currentUser.update(new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                Log.i(TAG, "done: 更新新头像成功");
+                                Toast.makeText(getActivity(), "修改头像成功", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.i(TAG, "done: 更新新头像失败" + e.toString());
+                            }
+                        }
+                    });
+                } else {
+                    Log.i(TAG, "done: 上传新头像失败" + e.toString());
+                    Toast.makeText(getActivity(), "上传新头像失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void startCropImage(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 500);
+        intent.putExtra("outputY", 500);
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        intent.putExtra("return-data", false);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
+        intent = Intent.createChooser(intent, "裁剪图片");
+        startActivityForResult(intent, REQUEST_CROP);
+    }
+
+    //获得临时保存图片的Uri，用当前的毫秒值作为文件名
+    private Uri getTmpUri() {
+        String IMAGE_FILE_DIR = Environment.getExternalStorageDirectory() + "/com.wetter.nnewscircle";
+        File dir = new File(IMAGE_FILE_DIR);
+        File file = new File(IMAGE_FILE_DIR, Long.toString(System.currentTimeMillis()));
+        //非常重要！！！如果文件夹不存在必须先手动创建
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return Uri.fromFile(file);
+    }
+
+
 }

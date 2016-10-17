@@ -24,7 +24,6 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
     <uses-permission android:name="android.permission.SET_DEBUG_APP"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
@@ -51,6 +50,9 @@
         <activity android:name=".ui.ChatActivity"/>
         <activity android:name=".ui.NewsActivity"/>
         <activity android:name=".ui.CommentActivity"/>
+        <activity android:name=".ui.LoginActivity"/>
+        <activity android:name=".ui.RegisterActivity"/>
+        <activity android:name=".ui.SettingActivity"/>
 
         <!-- 友盟社会化分享 -->
         <activity
@@ -138,12 +140,7 @@
         <service android:name="cn.bmob.newim.core.service.HeartBeatService"/>
         <!-- BmobEND -->
 
-        <activity android:name=".ui.LoginActivity">
-        </activity>
-        <activity android:name=".ui.RegisterActivity">
-        </activity>
-        <activity android:name=".ui.SettingActivity">
-        </activity>
+
     </application>
 
 </manifest>

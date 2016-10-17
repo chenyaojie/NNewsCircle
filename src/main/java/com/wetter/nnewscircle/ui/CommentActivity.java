@@ -1,16 +1,20 @@
 package com.wetter.nnewscircle.ui;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.wetter.nnewscircle.R;
@@ -46,6 +50,7 @@ public class CommentActivity extends BaseActivity {
     private Toolbar mToolbar;
     private LinearLayoutManager mLayoutManager;
     private EditText mEditText;
+    private ImageButton mSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,18 +151,44 @@ public class CommentActivity extends BaseActivity {
 
     private void setupEditView() {
         mEditText = (EditText) findViewById(R.id.comment_et);
+        mSend = (ImageButton) findViewById(R.id.comment_send_btn);
+
         mEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN || motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     User currentUser = BmobUser.getCurrentUser(User.class);
                     if (currentUser == null) {
-                        // TODO: 2016/8/31 跳转至登入界面
+                        Toast.makeText(CommentActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(CommentActivity.this, LoginActivity.class));
                     }
                 }
                 return false;
             }
         });
+
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String str = mEditText.getText().toString();
+                if (!str.isEmpty()) {
+                    mSend.setImageResource(R.drawable.ic_send_red_24px);
+                } else {
+                    mSend.setImageResource(R.drawable.ic_send_black_24px);
+                }
+            }
+        });
+
     }
 
     private void bindComment() {
@@ -252,7 +283,8 @@ public class CommentActivity extends BaseActivity {
         String commentText = mEditText.getText().toString();
 
         if (currentUser == null) {
-            // TODO: 2016/8/31 跳转至登入界面
+            Toast.makeText(CommentActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(CommentActivity.this, LoginActivity.class));
         } else if (commentText.isEmpty()) {
             Toast.makeText(CommentActivity.this, "评论不得为空", Toast.LENGTH_SHORT).show();
         } else {

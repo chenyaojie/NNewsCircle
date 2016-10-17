@@ -64,7 +64,7 @@ public class SocialActivity extends BaseActivity {
         mAddFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 添加联系人
+
 
             }
         });

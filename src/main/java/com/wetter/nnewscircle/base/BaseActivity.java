@@ -59,9 +59,10 @@ public abstract class BaseActivity extends AppCompatActivity{
                     hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
-    /*
-        修改SnackBar颜色
-    */
+
+    /**
+     * 修改SnackBar颜色
+     */
     public void setSnackbarColor(Snackbar snackbar, int messageColor, int backgroundColor) {
         View view = snackbar.getView();//获取Snackbar的view
         if(view!=null){

@@ -64,9 +64,8 @@ public class FriendListFragment extends BaseFragment {
     private void reloadFriendList() {
         BmobQuery<Friend> query = new BmobQuery<>();
         User user = BmobUser.getCurrentUser(User.class);
-        query.addWhereEqualTo("user", user);
+        query.addWhereEqualTo("user", user.getObjectId());
         query.include("friendUser");
-        query.order("-updatedAt");
         query.findObjects(new FindListener<Friend>() {
             @Override
             public void done(List<Friend> list, BmobException e) {
