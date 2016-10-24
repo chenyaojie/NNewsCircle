@@ -16,24 +16,37 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.wetter.nnewscircle.R;
 import com.wetter.nnewscircle.base.BaseActivity;
 import com.wetter.nnewscircle.bean.User;
 
+import java.util.List;
+import java.util.Map;
+
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.LogInListener;
+import cn.bmob.v3.listener.SaveListener;
 
 public class LoginActivity extends BaseActivity {
 
     public static final String TAG = "LoginActivity";
+    private static final String AUTH_PASSWORD = "AUTH";
     private LinearLayout rootView;
-    private EditText userName,passWord;
+    private EditText userName, passWord;
     private CardView loginButton;
+
+    private UMShareAPI mShareAPI = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mShareAPI = UMShareAPI.get(this);
         setContentView(R.layout.layout_activity_login);
     }
 
@@ -149,7 +162,7 @@ public class LoginActivity extends BaseActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!checkIsNotEmpty()) return;
+                if (!checkIsNotEmpty()) return;
                 hideKeyboard();
 
                 final ProgressDialog mDialog = new ProgressDialog(LoginActivity.this);
@@ -168,7 +181,7 @@ public class LoginActivity extends BaseActivity {
                         } else {
                             Log.i(TAG, "done: 用户登录失败" + e.toString());
                             Snackbar snackbar = Snackbar.make(rootView, "用户名或密码不正确", Snackbar.LENGTH_LONG);
-                            setSnackbarColor(snackbar,0xffffffff,0xFF212121);
+                            setSnackbarColor(snackbar, 0xffffffff, 0xFF212121);
                             snackbar.setAction("忘记密码？", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -190,13 +203,116 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void authorizeLogin(View view) {
+        SHARE_MEDIA platform = null;
         switch (view.getId()) {
             case R.id.login_qq_btn:
+                platform = SHARE_MEDIA.QQ;
                 break;
             case R.id.login_wechat_btn:
+                platform = SHARE_MEDIA.WEIXIN;
                 break;
             case R.id.login_weibo_btn:
+                platform = SHARE_MEDIA.SINA;
                 break;
         }
+        mShareAPI.doOauthVerify(LoginActivity.this, platform, new UMAuthListener() {
+            @Override
+            public void onComplete(SHARE_MEDIA share_media, int i, Map<String, String> map) {
+
+                String uid = "";
+                if (share_media == SHARE_MEDIA.QQ || share_media == SHARE_MEDIA.SINA) {
+                    uid = map.get("uid");
+                } else if (share_media == SHARE_MEDIA.WEIXIN) {
+                    uid = map.get("unionid");
+                }
+                getAuthInformation(share_media, uid);
+            }
+
+            @Override
+            public void onError(SHARE_MEDIA share_media, int i, Throwable throwable) {
+                Toast.makeText(LoginActivity.this, "第三方授权失败", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel(SHARE_MEDIA share_media, int i) {
+                Toast.makeText(LoginActivity.this, "第三方授权取消", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getAuthInformation(final SHARE_MEDIA share_media, final String uid) {
+        final ProgressDialog mDialog = new ProgressDialog(LoginActivity.this);
+        mDialog.setMessage("正在获取授权···");
+        mDialog.show();
+
+        // 判断用户是否以及授权过
+        BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("username", uid);
+        query.findObjects(new FindListener<User>() {
+            @Override
+            public void done(List<User> list, BmobException e) {
+                if (e == null) {
+                    if (list.size() == 1) {
+                        // 用户已经存在，直接登入
+                        BmobUser.loginByAccount(uid, AUTH_PASSWORD, new LogInListener<User>() {
+                            @Override
+                            public void done(User user, BmobException e) {
+                                if (user != null) {
+                                    if (share_media == SHARE_MEDIA.QQ) {
+                                        Toast.makeText(LoginActivity.this, "QQ授权登入成功", Toast.LENGTH_SHORT).show();
+                                    } else if (share_media == SHARE_MEDIA.SINA) {
+                                        Toast.makeText(LoginActivity.this, "新浪微博授权登入成功", Toast.LENGTH_SHORT).show();
+                                    } else if (share_media == SHARE_MEDIA.WEIXIN) {
+                                        Toast.makeText(LoginActivity.this, "微信授权登入成功", Toast.LENGTH_SHORT).show();
+                                    }
+                                    finish();
+                                }
+                            }
+                        });
+                    } else if (list.size() == 0) {
+                        // 用户还未注册，自动注册
+                        mShareAPI.getPlatformInfo(LoginActivity.this, share_media, new UMAuthListener() {
+                            @Override
+                            public void onComplete(SHARE_MEDIA share_media, int i, Map<String, String> map) {
+                                String avatar = map.get("profile_image_url");
+                                String nickname = map.get("screen_name");
+                                User user = new User();
+                                user.setAvatar(avatar);
+                                user.setUsername(uid);
+                                user.setPassword(AUTH_PASSWORD);
+                                user.setNickName(nickname);
+                                user.signUp(new SaveListener<User>() {
+                                    @Override
+                                    public void done(User user, BmobException e) {
+                                        if (e == null) {
+                                            Log.i(TAG, "done: 新第三方用户注册成功");
+                                            finish();
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(SHARE_MEDIA share_media, int i, Throwable throwable) {
+
+                            }
+
+                            @Override
+                            public void onCancel(SHARE_MEDIA share_media, int i) {
+
+                            }
+                        });
+                    }
+                } else {
+                    Log.i(TAG, "done: 获取用户信息失败" + e);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mShareAPI.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -38,6 +38,7 @@ import cn.bmob.v3.listener.UpdateListener;
 
 public class NewsActivity extends BaseActivity {
     private static final String TAG = "NewsActivity";
+    public static final String APP_URL = "http://www.wandoujia.com/apps/com.wetter.nnewscircle";
     private NewsList mNews;
     private User currentUser;
     private WebView mWebView;
@@ -172,7 +173,9 @@ public class NewsActivity extends BaseActivity {
 
                 } else {
                     Toast.makeText(NewsActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(NewsActivity.this,LoginActivity.class));
+                    btLike.setChecked(false);
+                    btCollect.setChecked(false);
+                    startActivity(new Intent(NewsActivity.this, LoginActivity.class));
                 }
             }
         });
@@ -212,7 +215,7 @@ public class NewsActivity extends BaseActivity {
                     }
                 } else {
                     Toast.makeText(NewsActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(NewsActivity.this,LoginActivity.class));
+                    startActivity(new Intent(NewsActivity.this, LoginActivity.class));
                 }
             }
         });
@@ -228,7 +231,7 @@ public class NewsActivity extends BaseActivity {
         mWebView.getSettings().setDatabaseEnabled(true);
         mWebView.getSettings().setAppCacheEnabled(true);
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        mWebView.loadData(mNews.getNewsContent(),"text/html; charset=UTF-8", null);
+        mWebView.loadData(mNews.getNewsContent(), "text/html; charset=UTF-8", null);
 
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -242,7 +245,7 @@ public class NewsActivity extends BaseActivity {
                 super.onProgressChanged(view, newProgress);
             }
         });
-        mWebView.setWebViewClient(new WebViewClient(){
+        mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
@@ -256,12 +259,12 @@ public class NewsActivity extends BaseActivity {
         Log.i(TAG, "onToolbarItemClick");
         switch (view.getId()) {
             case R.id.news_share_img:
-                // TODO: 调用友们SDK分享
-                new ShareAction(NewsActivity.this).setDisplayList(SHARE_MEDIA.SINA,SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE)
+
+                new ShareAction(NewsActivity.this).setDisplayList(SHARE_MEDIA.SINA, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE,SHARE_MEDIA.WEIXIN_FAVORITE)
                         .withTitle("新闻圈")
                         .withText(mNews.getNewsTitle())
-                        .withMedia(new UMImage(NewsActivity.this,mNews.getPicUrl()))
-                        .withTargetUrl("https://www.baidu.com/")
+                        .withMedia(new UMImage(NewsActivity.this, mNews.getPicUrl()))
+                        .withTargetUrl(APP_URL)
                         .setCallback(umShareListener)
                         .open();
                 break;
@@ -315,35 +318,33 @@ public class NewsActivity extends BaseActivity {
     private UMShareListener umShareListener = new UMShareListener() {
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            com.umeng.socialize.utils.Log.d("plat","platform"+platform);
-            if(platform.name().equals("WEIXIN_FAVORITE")){
-                Toast.makeText(NewsActivity.this,platform + " 收藏成功啦",Toast.LENGTH_SHORT).show();
-            }else{
+            com.umeng.socialize.utils.Log.d("plat", "platform" + platform);
+            if (platform.name().equals("WEIXIN_FAVORITE")) {
+                Toast.makeText(NewsActivity.this, platform + " 收藏成功啦", Toast.LENGTH_SHORT).show();
+            } else {
                 Toast.makeText(NewsActivity.this, platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
-            Toast.makeText(NewsActivity.this,platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
-            if(t!=null){
-                com.umeng.socialize.utils.Log.d("throw","throw:"+t.getMessage());
+            Toast.makeText(NewsActivity.this, platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
+            if (t != null) {
+                com.umeng.socialize.utils.Log.d("throw", "throw:" + t.getMessage());
             }
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform) {
-            Toast.makeText(NewsActivity.this,platform + " 分享取消了", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NewsActivity.this, platform + " 分享取消了", Toast.LENGTH_SHORT).show();
         }
     };
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        /** attention to this below ,must add this**/
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-        com.umeng.socialize.utils.Log.d("result","onActivityResult");
+
     }
 
 }

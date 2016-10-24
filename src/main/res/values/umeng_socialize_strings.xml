@@ -94,4 +94,5 @@
     <string name="umeng_socialize_text_alipay_key">支付宝</string>
     <string name="umeng_socialize_text_kakao_key">Kakao Talk</string>
     <string name="umeng_socialize_text_googleplus_key">GooglePlus</string>
+    <string name="umeng_socialize_text_more_key">更多</string>
 </resources>

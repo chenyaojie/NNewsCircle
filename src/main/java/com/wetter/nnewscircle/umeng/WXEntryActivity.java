@@ -1,8 +1,20 @@
 package com.wetter.nnewscircle.umeng;
+
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.utils.Log;
 import com.umeng.socialize.weixin.view.WXCallbackActivity;
-/**
- * Created by Wetter on 2016/9/3.
- */
+
+import java.util.Map;
+
+
 public class WXEntryActivity extends WXCallbackActivity {
+
+
 
 }
